@@ -89,7 +89,7 @@ if (!bme.begin(BME280_ADDRESS)) {
 void presentation()
 {
 	// Send the sketch version information to the gateway and Controller
-	sendSketchInfo("Temperature I2C", "1.05");
+	sendSketchInfo("Temperature I2C", "1.06");
 
   present(CHILD_ID_TEMP, S_TEMP);
   sleep(100);
@@ -143,7 +143,7 @@ float temperature = bme.readTemperature();
   int batteryPcnt = sensorValue / 10;
   float batteryV  = sensorValue * 0.003363075;
   
-	if (oldBatteryPcnt != batteryPcnt) {
+	if (oldBatteryPcnt != batteryPcnt || nNoUpdatesHum == FORCE_UPDATE_N_READS) {
 		// Power up radio after sleep
 		sendBatteryLevel(batteryPcnt);
 		oldBatteryPcnt = batteryPcnt;
