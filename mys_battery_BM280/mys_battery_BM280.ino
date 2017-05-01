@@ -25,26 +25,26 @@
  * http://www.mysensors.org/build/battery
  *
  */
-
+ // User Settings Area ******************************************
+#define SKETCHNAME "Temperature BME"
+#define VERSION "1.07"
+// Sleep time in Minutes
+int sleeptime = 1; 
+// ********************************************************
 
 
 // Enable debug prints to serial monitor
-#define MY_DEBUG
+// #define MY_DEBUG
 
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
 //#define MY_RADIO_RFM69
-
-// OTA Support
-#define MY_OTA_FIRMWARE_FEATURE
 
 #include <SPI.h>
 #include <MySensors.h>  
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
 
-// Sleep time in Minutes
-int sleeptime = 1; 
 static const uint64_t UPDATE_INTERVAL = sleeptime * 60000;
 
 int BATTERY_SENSE_PIN = A0;  // select the input pin for the battery sense point
@@ -54,7 +54,7 @@ static const uint8_t FORCE_UPDATE_N_READS = 10;
 
 #define CHILD_ID_TEMP 10
 #define CHILD_ID_HUM 11
-
+#define CHILD_ID_ST 99
 
 float lastTemp;
 float lastHum;
@@ -68,6 +68,7 @@ Adafruit_BME280 bme; // Use I2C
 
 MyMessage msgHum(CHILD_ID_HUM, V_HUM);
 MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
+MyMessage msgSleeptime(CHILD_ID_ST, V_CUSTOM);
 
 void setup()
 {
@@ -84,16 +85,21 @@ if (!bme.begin(BME280_ADDRESS)) {
       yield();
     }
 }
+
+// send Sleeptime
+send(msgSleeptime.set(sleeptime, 1));
 }
 
 void presentation()
 {
 	// Send the sketch version information to the gateway and Controller
-	sendSketchInfo("Temperature I2C", "1.06");
+	sendSketchInfo(SKETCHNAME, VERSION);
 
   present(CHILD_ID_TEMP, S_TEMP);
   sleep(100);
   present(CHILD_ID_HUM, S_HUM);
+  sleep(100);
+  present(CHILD_ID_ST, S_CUSTOM);
 }
 
 void loop()
