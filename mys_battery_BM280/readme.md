@@ -1,5 +1,15 @@
 ## Sensor with BME280 Temperature Sensor
 
+## Sensor IDs
+| ID | Typ |
+|:--- |:-------:|
+| 1  | Temperature |
+| 2  | Humidity |
+| 3  | Pressure |
+|201 | Sleeptime |
+|202 | Force-Reads|
+|203 | Config-Outdoor|
+
 ## Remote Config Values
 
 | Description       | Sensor-ID          | Payload  |  Default |
