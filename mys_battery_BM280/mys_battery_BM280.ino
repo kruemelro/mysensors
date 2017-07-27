@@ -25,8 +25,7 @@
  * http://www.mysensors.org/build/battery
  *
  */
- // User Settings Area ******************************************
-#define SKETCHNAME "TempNode"
+ // Default Settings Area ******************************************
 #define VERSION "1.00"
 
 // Default Values Stored in Eprom
@@ -51,40 +50,48 @@ static const uint8_t FORCE_UPDATE_N_READSstd = 30; //Should be set to report onc
 int BATTERY_SENSE_PIN = A0;
 int oldBatteryPcnt = 0;
 
-#define CHILD_ID_TEMP 10
-#define CHILD_ID_HUM 11
-
 float lastTemp;
 float lastHum;
+float lastBaro;
 uint8_t nNoUpdatesTemp;
 uint8_t nNoUpdatesHum;
+uint8_t nNoUpdatesBaro;
 uint64_t UPDATE_INTERVAL;
 uint64_t FORCE_UPDATE_N_READS;
+bool outdoor = false;
 
 #undef BME280_ADDRESS         // Undef BME280_ADDRESS from the BME280 library to easily override I2C address
 #define BME280_ADDRESS (0x76) // Low = 0x76 , High = 0x77 (default on adafruit and sparkfun BME280 modules, default for library)
 
 Adafruit_BME280 bme; // Use I2C
 
-MyMessage msgHum(CHILD_ID_HUM, V_HUM);
-MyMessage msgTemp(CHILD_ID_TEMP, V_TEMP);
+MyMessage msgTemp(1, V_TEMP);
+MyMessage msgHum(2, V_HUM);
+MyMessage msgBaro(3, V_PRESSURE);
 
 void setup()
 {
   uint8_t loadState1;
-  uint8_t loadState2;  
+  uint8_t loadState2;
+  uint8_t loadState3;  
   loadState1 = loadState(1);
   loadState2 = loadState(2);
-  Serial.print("REMOTE-CONFIG: read Eprom 1 - ");
-  Serial.println(loadState1);
+  loadState3 = loadState(3);
   if (loadState1 == 255) {
     // Eprom is not set, first Boot!
-    Serial.println("REMOTE-CONFIG: Store Sleeptime in Eprom 1");
+    Serial.println("REMOTE-CONFIG: First Boot, setting Defaults");
+    Serial.print("REMOTE-CONFIG: Store - Sleeptime: ");
+    Serial.println(sleeptime);
     saveState(1, sleeptime);
     UPDATE_INTERVAL = sleeptime * 60000;
-    Serial.println("REMOTE-CONFIG: Store Force-Reads in Eprom 2");
+    Serial.print("REMOTE-CONFIG: Store - Force-Reads: ");
+    Serial.println(FORCE_UPDATE_N_READSstd);
     saveState(2, FORCE_UPDATE_N_READSstd);
     FORCE_UPDATE_N_READS = FORCE_UPDATE_N_READSstd;
+    Serial.print("REMOTE-CONFIG: Store - Outdoor: ");
+    Serial.println(0);
+    saveState(3, 0);
+    outdoor = false;
   }
   else {
     // Eprom is set, read it!
@@ -92,6 +99,8 @@ void setup()
     Serial.println(loadState1);
     Serial.print("REMOTE-CONFIG: Force-Reads in Eprom: ");
     Serial.println(loadState2);
+    Serial.print("REMOTE-CONFIG: Outdoor in Eprom: ");
+    Serial.println(loadState3);
     UPDATE_INTERVAL = loadState1 * 60000;
     FORCE_UPDATE_N_READS = loadState2;
   }
@@ -114,12 +123,27 @@ if (!bme.begin(BME280_ADDRESS)) {
 
 void presentation()
 {
+  //reads the eprom here to cause presention is executed befor setup()
+  uint8_t loadState3;
+  loadState3 = loadState(3);
   // Send the sketch version information to the gateway and Controller
-  sendSketchInfo(SKETCHNAME, VERSION);
-
-  present(CHILD_ID_TEMP, S_TEMP);
-  sleep(100);
-  present(CHILD_ID_HUM, S_HUM);
+  if (loadState3 == 1) {
+    sendSketchInfo("TempOutdoorNode", VERSION);
+    outdoor = true;
+    present(1, S_TEMP);
+    sleep(100);
+    present(2, S_HUM);
+    sleep(100);
+    present(3, S_BARO);
+  }
+  else {
+    sendSketchInfo("TempNode", VERSION);
+    outdoor = false;
+    present(1, S_TEMP);
+    sleep(100);
+    present(2, S_HUM);
+  }
+  
 }
 
 void loop()
@@ -163,6 +187,29 @@ float temperature = bme.readTemperature();
     nNoUpdatesHum++;
   }
 
+  
+// Get Barmoter from DHT library if Sensor is configured to Outdoor
+  if (outdoor) {
+  float baro = bme.readPressure() / 100.0F;
+  if (isnan(baro)) {
+    Serial.println("Failed reading humidity from DHT");
+  } else if (baro != lastBaro || nNoUpdatesBaro == FORCE_UPDATE_N_READS) {
+    // Only send Barometer if it changed since the last measurement or if we didn't send an update for n times
+    lastBaro = baro;
+    // Reset no updates counter
+    nNoUpdatesBaro = 0;
+    send(msgBaro.set(baro, 1));
+    
+    #ifdef MY_DEBUG
+    Serial.print("P: ");
+    Serial.println(baro);
+    #endif
+  } else {
+    // Increase no update counter if the humidity stayed the same
+    nNoUpdatesBaro++;
+  }
+  }
+
   // get the battery Voltage
   int sensorValue = analogRead(BATTERY_SENSE_PIN);
   
@@ -185,6 +232,7 @@ void receive(const MyMessage &message) {
     Serial.print("REMOTE-CONFIG: Got new Sleeptime: ");
     Serial.println(inString.toInt());
     saveState(1, inString.toInt());
+    sleep(500);
     //Reboot Node to apply new Config
       WDTCSR |= (1<<WDCE) | (1<<WDE);
       WDTCSR= (1<<WDE);
@@ -195,7 +243,18 @@ void receive(const MyMessage &message) {
     Serial.print("REMOTE-CONFIG: Got new Force-Reads: ");
     Serial.println(inString.toInt());
     saveState(2, inString.toInt());
-    FORCE_UPDATE_N_READS = inString.toInt();
+    sleep(500);
+    //Reboot Node to apply new Config
+      WDTCSR |= (1<<WDCE) | (1<<WDE);
+      WDTCSR= (1<<WDE);
+      while(true){}
+  }
+  if (message.sensor == 203 && message.getCommand() == C_REQ && message.type == V_CUSTOM) {
+    String inString = message.getString();
+    Serial.print("REMOTE-CONFIG: Got new Outdoor: ");
+    Serial.println(inString.toInt());
+    saveState(3, inString.toInt());
+    sleep(500);
     //Reboot Node to apply new Config
       WDTCSR |= (1<<WDCE) | (1<<WDE);
       WDTCSR= (1<<WDE);
