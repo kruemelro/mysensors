@@ -36,7 +36,7 @@ static const uint8_t FORCE_UPDATE_N_READSstd = 30; //Should be set to report onc
 
 
 // Enable debug prints to serial monitor
-#define MY_DEBUG
+//#define MY_DEBUG
 #define MY_BAUD_RATE 9600
 
 // Enable and select radio type attached
@@ -49,6 +49,8 @@ static const uint8_t FORCE_UPDATE_N_READSstd = 30; //Should be set to report onc
 
 int BATTERY_SENSE_PIN = A0;
 int oldBatteryPcnt = 0;
+float _battery_min = 1.8;
+float _battery_max = 3.2;
 
 float lastTemp;
 float lastHum;
@@ -68,6 +70,9 @@ Adafruit_BME280 bme; // Use I2C
 MyMessage msgTemp(1, V_TEMP);
 MyMessage msgHum(2, V_HUM);
 MyMessage msgBaro(3, V_PRESSURE);
+MyMessage msgcfg1(201, V_CUSTOM);
+MyMessage msgcfg2(202, V_CUSTOM);
+MyMessage msgcfg3(203, V_CUSTOM);
 
 void setup()
 {
@@ -92,6 +97,9 @@ void setup()
     Serial.println(0);
     saveState(3, 0);
     outdoor = false;
+    send(msgcfg1.set(sleeptime, 1));
+    send(msgcfg2.set(FORCE_UPDATE_N_READSstd, 1));
+    send(msgcfg3.set(outdoor, 1));
   }
   else {
     // Eprom is set, read it!
@@ -103,6 +111,9 @@ void setup()
     Serial.println(loadState3);
     UPDATE_INTERVAL = loadState1 * 60000;
     FORCE_UPDATE_N_READS = loadState2;
+    send(msgcfg1.set(loadState1, 1));
+    send(msgcfg2.set(loadState2, 1));
+    send(msgcfg3.set(loadState3, 1));
   }
 
 
@@ -135,6 +146,12 @@ void presentation()
     present(2, S_HUM);
     sleep(100);
     present(3, S_BARO);
+    sleep(100);
+    present(201, S_CUSTOM);
+    sleep(100);
+    present(202, S_CUSTOM);
+    sleep(100);
+    present(203, S_CUSTOM);
   }
   else {
     sendSketchInfo("TempNode", VERSION);
@@ -142,6 +159,12 @@ void presentation()
     present(1, S_TEMP);
     sleep(100);
     present(2, S_HUM);
+    sleep(100);
+    present(201, S_CUSTOM);
+    sleep(100);
+    present(202, S_CUSTOM);
+    sleep(100);
+    present(203, S_CUSTOM);
   }
   
 }
@@ -211,10 +234,15 @@ float temperature = bme.readTemperature();
   }
 
   // get the battery Voltage
-  int sensorValue = analogRead(BATTERY_SENSE_PIN);
+  //int sensorValue = analogRead(BATTERY_SENSE_PIN);
   
-  int batteryPcnt = sensorValue / 10;
-  float batteryV  = sensorValue * 0.003363075;
+  //int batteryPcnt = sensorValue / 10;
+  //float batteryV  = sensorValue * 0.003363075;
+  float volt = analogRead(BATTERY_SENSE_PIN) * 0.003363075;
+      // calculate the percentage
+      int batteryPcnt = ((volt - _battery_min) / (_battery_max - _battery_min)) * 100;
+      if (batteryPcnt > 100) batteryPcnt = 100;
+      if (batteryPcnt < 0) batteryPcnt = 0;
   
   if (oldBatteryPcnt != batteryPcnt || nNoUpdatesHum == FORCE_UPDATE_N_READS) {
     // Power up radio after sleep
