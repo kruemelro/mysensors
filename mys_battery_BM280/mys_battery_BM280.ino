@@ -33,8 +33,6 @@ int sleeptime = 2; // Sleep time in Minutes
 static const uint8_t FORCE_UPDATE_N_READSstd = 30; //Should be set to report once in a hour
 // ********************************************************
 
-
-
 // Enable debug prints to serial monitor
 //#define MY_DEBUG
 #define MY_BAUD_RATE 9600
@@ -70,9 +68,9 @@ Adafruit_BME280 bme; // Use I2C
 MyMessage msgTemp(1, V_TEMP);
 MyMessage msgHum(2, V_HUM);
 MyMessage msgBaro(3, V_PRESSURE);
-MyMessage msgcfg1(201, V_CUSTOM);
-MyMessage msgcfg2(202, V_CUSTOM);
-MyMessage msgcfg3(203, V_CUSTOM);
+MyMessage msgcfg1(201, V_VAR1);
+MyMessage msgcfg2(202, V_VAR2);
+MyMessage msgcfg3(203, V_VAR3);
 
 void setup()
 {
@@ -255,7 +253,7 @@ float temperature = bme.readTemperature();
 
 // Remote Config Messages
 void receive(const MyMessage &message) {
-  if (message.sensor == 201 && message.getCommand() == C_REQ && message.type == V_CUSTOM) {
+  if (message.sensor == 201 && message.getCommand() == C_REQ && message.type == V_VAR1) {
     String inString = message.getString();
     Serial.print("REMOTE-CONFIG: Got new Sleeptime: ");
     Serial.println(inString.toInt());
@@ -266,7 +264,7 @@ void receive(const MyMessage &message) {
       WDTCSR= (1<<WDE);
       while(true){}
   }
-  if (message.sensor == 202 && message.getCommand() == C_REQ && message.type == V_CUSTOM) {
+  if (message.sensor == 202 && message.getCommand() == C_REQ && message.type == V_VAR2) {
     String inString = message.getString();
     Serial.print("REMOTE-CONFIG: Got new Force-Reads: ");
     Serial.println(inString.toInt());
@@ -277,7 +275,7 @@ void receive(const MyMessage &message) {
       WDTCSR= (1<<WDE);
       while(true){}
   }
-  if (message.sensor == 203 && message.getCommand() == C_REQ && message.type == V_CUSTOM) {
+  if (message.sensor == 203 && message.getCommand() == C_REQ && message.type == V_VAR3) {
     String inString = message.getString();
     Serial.print("REMOTE-CONFIG: Got new Outdoor: ");
     Serial.println(inString.toInt());
