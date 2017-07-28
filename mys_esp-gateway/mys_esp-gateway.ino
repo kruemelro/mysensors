@@ -68,17 +68,17 @@
 
 // Enables and select radio type (if attached)
 #define MY_RADIO_NRF24
-//#define MY_RADIO_RFM69
 
 // RFA24_PA_MAX get ACK Probs
 #define MY_RF24_PA_LEVEL RF24_PA_HIGH
 
-// Set WIFI SSID and password
-#define MY_ESP8266_SSID "xx"
-#define MY_ESP8266_PASSWORD "xxx"
+#define MY_ESP8266_HOSTNAME "MyS-Gateway"
 
- #define MY_ESP8266_HOSTNAME "MyS-Gateway"
+// The port to keep open on node server mode
+#define MY_PORT 5003
 
+// How many clients should be able to connect to this gateway (default 1)
+#define MY_GATEWAY_MAX_CLIENTS 2
 
 /*
 // Enable inclusion mode
