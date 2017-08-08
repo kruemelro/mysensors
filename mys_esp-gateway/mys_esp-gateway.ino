@@ -72,6 +72,11 @@
 // RFA24_PA_MAX get ACK Probs
 #define MY_RF24_PA_LEVEL RF24_PA_HIGH
 
+#define MY_GATEWAY_ESP8266
+
+#define MY_ESP8266_SSID "han"
+#define MY_ESP8266_PASSWORD "Rv7C698A"
+
 #define MY_ESP8266_HOSTNAME "MyS-Gateway"
 
 // The port to keep open on node server mode
@@ -106,24 +111,17 @@
 
 
 #include <ESP8266WiFi.h>
-#include <DNSServer.h>
-#include <ESP8266WebServer.h>
-#include <WifiManager.h>
 #include <MySensors.h>
 
 void setup()
 {
-  WiFiManager wifiManager;
-  wifiManager.autoConnect();
 }
 
 void presentation()
 {
-	// Present locally attached sensors here
 }
 
 
 void loop()
 {
-	// Send locally attech sensors data here
 }
