@@ -12,5 +12,5 @@
 
 | Description       | Sensor-ID          | Payload  |  Default |
 | ------------- |:-------------:|:-----:|:-----:
-| Sleeptime     | 201 | 1-240 | 2 |
-| Force Reads      | 202      |   1-240 | 30 |
+| Sleeptime     | 201 | 1-240 | 5 |
+| Force Reads      | 202      |   1-240 | 12 |
