@@ -1,12 +1,21 @@
 ## Sensor with BME280 Temperature Sensor
 
 ## Sensor IDs
-| ID | Typ |
-|:--- |:-------:|
-| 1  | Temperature |
-| 2  | Humidity |
+| ID | Typ | Child-Item | openhab |
+|:--- |:-------:|:--------:|:--------:|
+| 1  | Temperature | | |
+|    |             |Temperature| Temperature|
+|    |             |Battery| Battery|
+|    |             |Last Update| Update|
+| 2  | Humidity | | |
+|    |             |Humidity| Humidity|
 | 3  | Barometer |
-|201 | RemoteConfig |
+|    |             |Pressure| Air Pressure|
+|    |             |Forecast| Forecast|
+|201 | RemoteConfig | | |
+|    |             |Var1| Sleeptime|
+|    |             |Var2| ForceReads|
+|    |             |Var3| Read Air Pressure|
 
 ## Remote Config Values
 
