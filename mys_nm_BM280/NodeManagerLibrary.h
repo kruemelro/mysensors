@@ -69,7 +69,6 @@
 #define EEPROM_SLEEP_1 5
 #define EEPROM_SLEEP_2 6
 #define EEPROM_SLEEP_3 7
-#define EEPROM_PALEVEL 8
 #define EEPROM_USER_START 100
 
 
@@ -107,9 +106,6 @@
 #endif
 #ifndef FEATURE_POWER_MANAGER
   #define FEATURE_POWER_MANAGER OFF
-#endif
-#ifndef FEATURE_PALEVEL
-  #define FEATURE_PALEVEL OFF
 #endif
 #ifndef FEATURE_INTERRUPTS
   #define FEATURE_INTERRUPTS ON
@@ -2072,10 +2068,6 @@ class NodeManager {
     bool _save_sleep_settings = false;
     void _loadSleepSettings();
     void _saveSleepSettings();
-#endif
-#if FEATURE_PALEVEL == ON
-    void _loadPASettings();
-    void _savePASettings();
 #endif
     void _sleepBetweenSend();
 #if FEATURE_TIME == ON

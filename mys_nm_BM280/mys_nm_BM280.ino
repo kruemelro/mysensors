@@ -4,15 +4,15 @@
 
 // General settings
 #define SKETCH_NAME "TempNode"
-#define SKETCH_VERSION "1.20"
+#define SKETCH_VERSION "1.24"
 //#define MY_DEBUG
 
 // NRF24 radio settings
-#define MY_RADIO_RF24
+#define MY_RADIO_NRF24
 
 // Advanced settings
 #define MY_BAUD_RATE 9600
-//#define MY_SMART_SLEEP_WAIT_DURATION_MS 500
+#define MY_SMART_SLEEP_WAIT_DURATION_MS 1000
 #define MY_SPLASH_SCREEN_DISABLED
 
 /***********************************
@@ -28,9 +28,8 @@
  * NodeManager built-in features
  */
  
-#define FEATURE_DEBUG ON
+#define FEATURE_DEBUG OFF
 #define FEATURE_POWER_MANAGER OFF
-#define FEATURE_PALEVEL OFF
 #define FEATURE_INTERRUPTS OFF
 #define FEATURE_CONDITIONAL_REPORT OFF
 #define FEATURE_EEPROM ON

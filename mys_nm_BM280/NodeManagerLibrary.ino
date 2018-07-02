@@ -2077,6 +2077,14 @@ void SensorBME280::onSetup() {
 void SensorBME280::onLoop(Child* child) {
   // temperature sensor
   if (child->getType() == V_TEMP) {
+    // set BME to Forced mode again to trigger one reading, only on temperature cause it meassures all
+    _bm->setSampling(Adafruit_BME280::MODE_FORCED,
+                    Adafruit_BME280::SAMPLING_X1, // temperature
+                    Adafruit_BME280::SAMPLING_X1, // pressure
+                    Adafruit_BME280::SAMPLING_X1, // humidity
+                    Adafruit_BME280::FILTER_OFF   );
+    // the Sensor needs about 10ms to write the values to the registers                
+    delay(10);
     // read the temperature
     float temperature = _bm->readTemperature();
     // convert it
@@ -4652,9 +4660,9 @@ void SensorOpenHABConfiguration::onLoop(Child* child) {
 // what to do as the main task when receiving a message
 void SensorOpenHABConfiguration::onReceive(MyMessage* message) {
   // expect a REQ, V_VAR message
-  if (message->getCommand() != C_REQ && message->type != V_VAR1) return;
+  if (message->type != V_VAR1) return;
   // parse the request
-  //Request request = Request(message->sensor,message->getString());
+  Request request = Request(message->sensor,message->getString());
   String instring = message->getString();
   int value = instring.toInt();
   if ( message->type == V_VAR1 ) {
@@ -4695,26 +4703,9 @@ void NodeManager::setRetries(int value) {
 int NodeManager::getRetries() {
   return _retries;
 }
-#if FEATURE_PALEVEL == ON
-void NodeManager::setPALevel(int value) {
-  // set PA-Level to use
-  _palevel = value;
-#if FEATURE_EEPROM == ON
-  // save pa settings to eeprom
-   _savePASettings();
-#endif
-}
-
-int NodeManager::getPALevel() {
-  return _palevel;
-}
-#endif
 
 #if FEATURE_SLEEP == ON
 void NodeManager::setSleepSeconds(int value) {
-  // set the status to AWAKE if the time provided is 0, SLEEP otherwise
-  if (value == 0) _status = AWAKE;
-  else _status = SLEEP;
   // store the time
   _sleep_time = value;
 #if FEATURE_EEPROM == ON
@@ -4847,10 +4838,6 @@ void NodeManager::before() {
 #if FEATURE_EEPROM == ON
   // restore the sleep settings saved in the eeprom
   if (_save_sleep_settings) _loadSleepSettings();
-#endif
-
-#if FEATURE_PALEVEL == ON
-  _loadPASettings();
 #endif
 
   // setup individual sensors
@@ -5441,6 +5428,10 @@ void NodeManager::_loadSleepSettings() {
     int bit_2 = loadState(EEPROM_SLEEP_2);
     int bit_3 = loadState(EEPROM_SLEEP_3);
     _sleep_time = bit_3*255*255 + bit_2*255 + bit_1;
+    if (_sleep_time == 0) {
+      _sleep_time = 2;
+      setSleepMinutes(_sleep_time);
+    }
     #if FEATURE_DEBUG == ON
       Serial.print(F("LOADSLP T="));
       Serial.println(_sleep_time);
