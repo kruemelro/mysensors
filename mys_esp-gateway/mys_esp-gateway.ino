@@ -58,26 +58,26 @@
  */
 
 #define SKETCHNAME "Gateway"
-#define VERSION "1.00"
+#define VERSION "1.10"
 
 // Enable debug prints to serial monitor
-#define MY_DEBUG
+//#define MY_DEBUG
 
 // Use a bit lower baudrate for serial prints on ESP8266 than default in MyConfig.h
 #define MY_BAUD_RATE 9600
 
 // Enables and select radio type (if attached)
-#define MY_RADIO_NRF24
+#define MY_RADIO_RF24
 
 // RFA24_PA_MAX get ACK Probs
-#define MY_RF24_PA_LEVEL RF24_PA_HIGH
+//#define MY_RF24_PA_LEVEL RF24_PA_MAX
 
 #define MY_GATEWAY_ESP8266
 
-#define MY_ESP8266_SSID "han"
-#define MY_ESP8266_PASSWORD "Rv7C698A"
+#define MY_WIFI_SSID "*****"
+#define MY_WIFI_PASSWORD "*****"
 
-#define MY_ESP8266_HOSTNAME "MyS-Gateway"
+#define MY_WIFI_HOSTNAME "MyS-Gateway"
 
 // The port to keep open on node server mode
 #define MY_PORT 5003
