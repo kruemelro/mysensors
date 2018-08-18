@@ -26,10 +26,9 @@
  *
  */
  // Default Settings Area ******************************************
-#define VERSION "1.00"
+#define VERSION "1.12"
 #define Sketchname "WindowNode"
-#define useack "TRUE"
-// Default Values Stored in Eprom
+ 
 int sleeptime = 60; // Sleep time in Minutes
 static const uint8_t FORCE_UPDATE_N_READSstd = 1; //Should be set to report once in a hour
 // ********************************************************
@@ -52,11 +51,6 @@ float _battery_max = 3.2;
 #define WindowPin1 2   // Arduino Digital I/O pin for button/reed switch
 #define WindowPin2 3 // Arduino Digital I/O pin for button/reed switch
 
-
-//Bounce debouncer1 = Bounce();
-//Bounce debouncer2 = Bounce();  
-//int oldValue1=-1;
-//int oldValue2=-1;
 uint64_t UPDATE_INTERVAL;
 uint64_t FORCE_UPDATE_N_READS;
 int nNoUpdates=0;
@@ -64,8 +58,7 @@ int nNoUpdates=0;
 
 MyMessage msg(1, V_TRIPPED);
 MyMessage msg2(2, V_TRIPPED);
-MyMessage msgcfg1(201, V_VAR1);
-MyMessage msgcfg2(201, V_VAR2);
+MyMessage msgVCC(200, V_VOLTAGE);
 
 void setup()
 {
@@ -73,30 +66,20 @@ void setup()
   uint8_t loadState2;
   loadState1 = loadState(1);
   loadState2 = loadState(2);
-  if (loadState1 == 255) {
+  if (loadState1 != 2) {
     // Eprom is not set, first Boot!
-    Serial.println("REMOTE-CONFIG: First Boot, setting Defaults");
-    Serial.print("REMOTE-CONFIG: Store - Sleeptime: ");
+    Serial.println("First Boot, setting Defaults");
+    Serial.print("Store - Sleeptime: ");
     Serial.println(sleeptime);
-    saveState(1, sleeptime);
+    saveState(2, sleeptime);
+    saveState(1, 2);
     UPDATE_INTERVAL = sleeptime * 60000;
-    Serial.print("REMOTE-CONFIG: Store - Force-Reads: ");
-    Serial.println(FORCE_UPDATE_N_READSstd);
-    saveState(2, FORCE_UPDATE_N_READSstd);
     FORCE_UPDATE_N_READS = FORCE_UPDATE_N_READSstd;
-    send(msgcfg1.set(sleeptime, 1), useack);
-    send(msgcfg2.set(FORCE_UPDATE_N_READSstd, 1), useack);
   }
   else {
     // Eprom is set, read it!
-    Serial.print("REMOTE-CONFIG: Sleeptime in Eprom: ");
-    Serial.println(loadState1);
-    Serial.print("REMOTE-CONFIG: Force-Reads in Eprom: ");
-    Serial.println(loadState2);
-    UPDATE_INTERVAL = loadState1 * 60000;
-    FORCE_UPDATE_N_READS = loadState2;
-    send(msgcfg1.set(loadState1, 1), useack);
-    send(msgcfg2.set(loadState2, 1), useack);
+    UPDATE_INTERVAL = loadState2 * 60000;
+    FORCE_UPDATE_N_READS = FORCE_UPDATE_N_READSstd;
   }
 
 // Setup the buttons
@@ -105,11 +88,6 @@ void setup()
 // Activate internal pull-ups
   digitalWrite(WindowPin1, HIGH);
   digitalWrite(WindowPin2, HIGH);
-// After setting up the button, setup debouncer
-  //debouncer1.attach(WindowPin1);
-  //debouncer2.attach(WindowPin2);
-  //debouncer1.interval(5);
-  //debouncer2.interval(5);
   
   // use the 1.1 V internal reference
 #if defined(__AVR_ATmega2560__)
@@ -123,36 +101,15 @@ void setup()
 void presentation()
 {
     sendSketchInfo(Sketchname, VERSION);
-    present(1, S_DOOR, "Window 1", useack);
+    present(1, S_DOOR, "Window 1");
     sleep(100);
-    present(2, S_DOOR, "Window 2", useack);
+    present(2, S_DOOR, "Window 2");
     sleep(100);
-    present(201, S_CUSTOM, "Remote Config", useack);
+    present(200, S_MULTIMETER, "VCC");
 }
 
 void loop()
 {
-//  // Window 1
-//  debouncer1.update();
-//  // Get the update value
-//  int value1 = debouncer1.read();
-// 
-//  if (value1 != oldValue1) {
-//     // Send in the new value
-//     send(msg.set(value1==HIGH ? 1 : 0));
-//     oldValue1 = value1;
-//  }
-//  // Window 2
-//  debouncer2.update();
-//  // Get the update value
-//  int value2 = debouncer2.read();
-// 
-//  if (value2 != oldValue2) {
-//     // Send in the new value
-//     send(msg2.set(value2==HIGH ? 1 : 0));
-//     oldValue2 = value2;
-//  }
-
   uint8_t value;
   static uint8_t sentValue=2;
   static uint8_t sentValue2=2;
@@ -164,7 +121,7 @@ void loop()
 
   if (value != sentValue) {
     // Value has changed from last transmission, send the updated value
-    send(msg.set(value==HIGH), useack);
+    resend(msg.set(value==HIGH), 5);
     sentValue = value;
   }
 
@@ -172,7 +129,7 @@ void loop()
 
   if (value != sentValue2) {
     // Value has changed from last transmission, send the updated value
-    send(msg2.set(value==HIGH), useack);
+    resend(msg2.set(value==HIGH), 5);
     sentValue2 = value;
   }
 
@@ -184,7 +141,8 @@ void loop()
   
   if (oldBatteryPcnt != batteryPcnt || nNoUpdates == FORCE_UPDATE_N_READS) {
     // Power up radio after sleep
-    sendBatteryLevel(batteryPcnt, useack);
+    send(msgVCC.set(volt,2));
+    sendBatteryLevel(batteryPcnt);
     oldBatteryPcnt = batteryPcnt;
     nNoUpdates = 0;
   } else {
@@ -194,28 +152,22 @@ void loop()
 }
 
 
-// Remote Config Messages
-void receive(const MyMessage &message) {
-  if (message.sensor == 201 && message.getCommand() == C_SET && message.type == V_VAR1) {
-    String inString = message.getString();
-    Serial.print("REMOTE-CONFIG: Got new Sleeptime: ");
-    Serial.println(inString.toInt());
-    saveState(1, inString.toInt());
-    sleep(500);
-    //Reboot Node to apply new Config
-      WDTCSR |= (1<<WDCE) | (1<<WDE);
-      WDTCSR= (1<<WDE);
-      while(true){}
+
+
+void resend(MyMessage &msg, int repeats)
+{
+  int repeat = 1;
+  int repeatdelay = 0;
+  boolean sendOK = false;
+
+  while ((sendOK == false) and (repeat < repeats)) {
+    if (send(msg)) {
+      sendOK = true;
+    } else {
+      sendOK = false;
+      Serial.print("FEHLER ");
+      Serial.println(repeat);
+      repeatdelay += 250;
+    } repeat++; delay(repeatdelay);
   }
-  if (message.sensor == 201 && message.getCommand() == C_SET && message.type == V_VAR2) {
-    String inString = message.getString();
-    Serial.print("REMOTE-CONFIG: Got new Force-Reads: ");
-    Serial.println(inString.toInt());
-    saveState(2, inString.toInt());
-    sleep(500);
-    //Reboot Node to apply new Config
-      WDTCSR |= (1<<WDCE) | (1<<WDE);
-      WDTCSR= (1<<WDE);
-      while(true){}
-  } 
 }
