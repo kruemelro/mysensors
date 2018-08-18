@@ -24,13 +24,19 @@
 
 ### things
 temperature     node01   "MySensorNode(01)"	[ nodeId=1, childId=1, smartSleep=true, nodeUpdateTimeout=70 ]
+
 humidity        node01   "MySensorNode(01)"	[ nodeId=1, childId=2, smartSleep=true, nodeUpdateTimeout=70 ]
+
 multimeter      node01   "MySensorNode(01)"	[ nodeId=1, childId=200, smartSleep=true, nodeUpdateTimeout=70 ]
+
 customSensor    node01   "MySensorNode(01)"	[ nodeId=1, childId=201, smartSleep=true, nodeUpdateTimeout=70 ]
 
 
 ### items
 DateTime bedroom_sensor_update				"Update [%1$tR]"					<clock>				(bedroom_group, group_sensor_update)							{ channel="mysensors:temperature:gateway:node01:lastupdate" }
+
 Number	 bedroom_sensor_battery				"Schlafzimmer [%.0f %%]"			<battery>			(bedroom_group, group_sensor_battery)                           { channel="mysensors:temperature:gateway:node01:battery" }
+
 Number	 bedroom_sensor_vcc					 "Schlafzimmer [%.2f V]"			 <energy>			 (bedroom_group, group_sensor_vcc)      						{ channel="mysensors:multimeter:gateway:node01:volt" }
+
 Number   bedroom_sensor_sleeptime            "Schlafzimmer [%.0f Min]"          <sleeptime>         (bedroom_group,group_sensor_sleeptime)							{ channel="mysensors:customSensor:gateway:node01:var1" }
