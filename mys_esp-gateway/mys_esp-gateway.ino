@@ -57,7 +57,7 @@
  * Make sure to fill in your ssid and WiFi password below for ssid & pass.
  */
 
-#define SKETCHNAME "Gateway"
+#define SKETCHNAME "Gateway_channel-104"
 #define VERSION "1.10"
 
 // Enable debug prints to serial monitor
@@ -68,16 +68,17 @@
 
 // Enables and select radio type (if attached)
 #define MY_RADIO_RF24
+#define MY_RF24_CHANNEL (104)
 
 // RFA24_PA_MAX get ACK Probs
 //#define MY_RF24_PA_LEVEL RF24_PA_MAX
 
 #define MY_GATEWAY_ESP8266
 
-#define MY_WIFI_SSID "*****"
-#define MY_WIFI_PASSWORD "*****"
+#define MY_WIFI_SSID "beehive"
+#define MY_WIFI_PASSWORD "TaPh!8388"
 
-#define MY_WIFI_HOSTNAME "MyS-Gateway"
+#define MY_WIFI_HOSTNAME "mysgw"
 
 // The port to keep open on node server mode
 #define MY_PORT 5003

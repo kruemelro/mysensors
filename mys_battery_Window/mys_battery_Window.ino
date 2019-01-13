@@ -26,7 +26,7 @@
  *
  */
  // Default Settings Area ******************************************
-#define VERSION "1.12"
+#define VERSION "1.13"
 #define Sketchname "WindowNode"
  
 int sleeptime = 60; // Sleep time in Minutes
@@ -39,6 +39,7 @@ static const uint8_t FORCE_UPDATE_N_READSstd = 1; //Should be set to report once
 
 // Enable and select radio type attached
 #define MY_RADIO_NRF24
+#define MY_RF24_CHANNEL (104)
 
 #include <SPI.h>
 #include <MySensors.h>

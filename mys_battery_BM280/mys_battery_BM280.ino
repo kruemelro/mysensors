@@ -26,7 +26,7 @@
 
 */
 // Default Settings Area ******************************************
-#define VERSION "1.12"
+#define VERSION "1.13"
 
 // Default Values Stored in Eprom
 int sleeptime = 2; // Sleep time in Minutes
@@ -38,6 +38,7 @@ int sleeptime = 2; // Sleep time in Minutes
 
 // Enable and select radio type attached
 #define MY_RADIO_RF24
+#define MY_RF24_CHANNEL (104)
 
 #include <SPI.h>
 #include <MySensors.h>
