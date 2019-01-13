@@ -11,14 +11,13 @@
 |    |             |Humidity| Humidity|
 |200 | Multimeter |
 |    |             |Voltage| Battery Voltage|
-|201 | RemoteConfig | | |
+|201 | Node-Config | | |
 |    |             |Var1| Sleeptime|
-|202 | SystemConfig | | |
+|202 | System-Config | | |
 |    |             |Var1| ParentNode|
 |    |             |Var2| Radio Power Level|
-|250 | SystemOnline | | |
+|250 | System-Reporting | | |
 |    |             |Status| Online|
-|251 | SystemReport-TX | | |
 |    |             |Var1| FailedTransmissions|
 
 ## Remote Config Values
