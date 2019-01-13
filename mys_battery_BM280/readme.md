@@ -31,7 +31,7 @@
 | Name       | Sensor-ID          | VAR | Payload  |  Default | Description |
 | ------------- |:-------------:|:----:|:-----:|:-----:| :-----:|
 | ParentNode     | 202 | VAR1 | 0-254 | 0 | Defines parent node, 0 means automatic |
-| Radio Power Level | 202 | VAR2 | 1-4| 3 | Set Radio Power Level<br/>1 = Min<br/>2 = Low<br/>3 = High<br/>4 = Max |
+| Radio Power Level | 202 | VAR2 | 0-3| 2 | Set Radio Power Level<br/>0 = Min<br/>1 = Low<br/>2 = High<br/>3 = Max |
 
 ## OpenHAB samples
 
