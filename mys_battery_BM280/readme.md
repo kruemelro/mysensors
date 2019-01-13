@@ -13,12 +13,26 @@
 |    |             |Voltage| Battery Voltage|
 |201 | RemoteConfig | | |
 |    |             |Var1| Sleeptime|
+|202 | SystemConfig | | |
+|    |             |Var1| ParentNode|
+|    |             |Var2| Radio Power Level|
+|250 | SystemOnline | | |
+|    |             |Status| Online|
+|251 | SystemReport-TX | | |
+|    |             |Var1| FailedTransmissions|
 
 ## Remote Config Values
 
-| Description       | Sensor-ID          | VAR | Payload  |  Default |
+| Name       | Sensor-ID          | VAR | Payload  |  Default |
 | ------------- |:-------------:|:----:|:-----:|:-----:
 | Sleeptime     | 201 | VAR1 | 1-60 | 2 |
+
+## System Config Values
+
+| Name       | Sensor-ID          | VAR | Payload  |  Default | Description |
+| ------------- |:-------------:|:----:|:-----:|:-----:| :-----:|
+| ParentNode     | 202 | VAR1 | 0-254 | 0 | Defines parent node, 0 means automatic |
+| Radio Power Level | 202 | VAR2 | 1-4| 3 | Set Radio Power Level<br/>1 = Min<br/>2 = Low<br/>3 = High<br/>4 = Max |
 
 ## OpenHAB samples
 
