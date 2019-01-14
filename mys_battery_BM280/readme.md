@@ -20,7 +20,8 @@
 |    |             |Var4| Send Retry |
 |254 | System-Reporting | | |
 |    |             |Status| Online|
-|    |             |Var1| FailedTransmissions|
+|    |             |Var1| Transmissions |
+|    |             |Var2| FailedTransmissions|
 
 ## Remote Config Values
 
