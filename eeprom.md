@@ -6,3 +6,5 @@
 | 2 | sleeptime |
 | 3 | parentnode |
 | 4 | pa Level |
+| 5 | staticparent |
+| 6 | sendretry | 
