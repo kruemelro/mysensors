@@ -11,13 +11,12 @@
 |    |             |Humidity| Humidity|
 |200 | Multimeter |
 |    |             |Voltage| Battery Voltage|
-|201 | Node-Config | | |
-|    |             |Var1| Sleeptime|
 |202 | System-Config | | |
 |    |             |Var1| Prefered Parent|
 |    |             |Var2| Radio Power Level|
 |    |             |Var3| Parent is static |
 |    |             |Var4| Send Retry |
+|    |             |Var5| Sleeptime|
 |254 | System-Reporting | | |
 |    |             |Status| Online|
 |    |             |Var1| Transmissions |
