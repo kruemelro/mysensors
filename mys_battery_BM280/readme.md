@@ -14,9 +14,11 @@
 |201 | Node-Config | | |
 |    |             |Var1| Sleeptime|
 |202 | System-Config | | |
-|    |             |Var1| ParentNode|
+|    |             |Var1| Prefered Parent|
 |    |             |Var2| Radio Power Level|
-|250 | System-Reporting | | |
+|    |             |Var3| Parent is static |
+|    |             |Var4| Send Retry |
+|254 | System-Reporting | | |
 |    |             |Status| Online|
 |    |             |Var1| FailedTransmissions|
 
@@ -30,8 +32,10 @@
 
 | Name       | Sensor-ID          | VAR | Payload  |  Default | Description |
 | ------------- |:-------------:|:----:|:-----:|:-----:| :-----:|
-| ParentNode     | 202 | VAR1 | 0-254 | 0 | Defines parent node, 0 means automatic |
+| Prefered Parent     | 202 | VAR1 | 0-254 | 0 | Defines parent node, 0 means automatic |
 | Radio Power Level | 202 | VAR2 | 0-3| 2 | Set Radio Power Level<br/>0 = Min<br/>1 = Low<br/>2 = High<br/>3 = Max |
+| Parent is static | 202 | VAR3 | 0-1 | 0 | Disable search for parent if prefered parent fails |
+| Send Retry | 202 | VAR4 | 0-100 | 5 | Configures the amount of retrys if no ACK received | 
 
 ## OpenHAB samples
 
