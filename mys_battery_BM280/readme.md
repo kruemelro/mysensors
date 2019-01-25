@@ -21,6 +21,7 @@
 |    |             |Status| Online|
 |    |             |Var1| Transmissions |
 |    |             |Var2| FailedTransmissions|
+|    |             |Var3| Retries |
 
 
 ## System Config Values
@@ -36,20 +37,25 @@
 ## OpenHAB samples
 
 ### things
-temperature     node01   "MySensorNode(01)"	[ nodeId=1, childId=1, smartSleep=true, nodeUpdateTimeout=70 ]
-
-humidity        node01   "MySensorNode(01)"	[ nodeId=1, childId=2, smartSleep=true, nodeUpdateTimeout=70 ]
-
-multimeter      node01   "MySensorNode(01)"	[ nodeId=1, childId=200, smartSleep=true, nodeUpdateTimeout=70 ]
-
-customSensor    node01   "MySensorNode(01)"	[ nodeId=1, childId=201, smartSleep=true, nodeUpdateTimeout=70 ]
+    temperature     node01   "MySensorNode(01)"	[ nodeId=1, childId=1, smartSleep=true, nodeUpdateTimeout=70 ]
+    humidity        node01   "MySensorNode(01)"	[ nodeId=1, childId=2, smartSleep=true, nodeUpdateTimeout=70 ]
+    multimeter      node01   "MySensorNode(01)"	[ nodeId=1, childId=200, smartSleep=true, nodeUpdateTimeout=70 ]
+    customSensor    node01   "MySensorNode(01)"	[ nodeId=1, childId=201, smartSleep=true, nodeUpdateTimeout=70 ]
+    light           node01   "MySensorNode(01)"	[ nodeId=1, childId=54, smartSleep=true, nodeUpdateTimeout=70 ]
 
 
 ### items
-DateTime bedroom_sensor_update				"Update [%1$tR]"					<clock>				(bedroom_group, group_sensor_update)							{ channel="mysensors:temperature:gateway:node01:lastupdate" }
-
-Number	 bedroom_sensor_battery				"Schlafzimmer [%.0f %%]"			<battery>			(bedroom_group, group_sensor_battery)                           { channel="mysensors:temperature:gateway:node01:battery" }
-
-Number	 bedroom_sensor_vcc					 "Schlafzimmer [%.2f V]"			 <energy>			 (bedroom_group, group_sensor_vcc)      						{ channel="mysensors:multimeter:gateway:node01:volt" }
-
-Number   bedroom_sensor_sleeptime            "Schlafzimmer [%.0f Min]"          <sleeptime>         (bedroom_group,group_sensor_sleeptime)							{ channel="mysensors:customSensor:gateway:node01:var1" }
+    Number	 bedroom_temperature				"Schlafzimmer [%.2f °C]"					<temperature>		(bedroom_group, group_temperature, bedroom_chart)       { channel="mysensors:temperature:gateway:node01:temp" }
+    Number	 bedroom_humidity					"Schlafzimmer [%.0f %%]"					<humidity>			(bedroom_group, group_humidity)                         { channel="mysensors:humidity:gateway:node01:hum" }
+    DateTime bedroom_sensor_update				"Update [%1$tR]"							<time>				(bedroom_group, group_sensor_update)					{ channel="mysensors:temperature:gateway:node01:lastupdate" }
+    Number	 bedroom_sensor_battery				"Schlafzimmer [%.0f %%]"					<battery>			(bedroom_group, group_sensor_battery)                   { channel="mysensors:temperature:gateway:node01:battery" }
+    Number	 bedroom_sensor_vcc					"Schlafzimmer [%.2f V]"						<energy>			(bedroom_group, group_sensor_vcc)      					{ channel="mysensors:multimeter:gateway:node01:volt" }
+    Number	 bedroom_sensor_parent				"Schlafzimmer [%.0f]"											(bedroom_group)											{ channel="mysensors:customSensor:gateway:node01:var1" }
+    Number	 bedroom_sensor_radiopower			"Schlafzimmer [MAP(radiopower.map):%s]"							(bedroom_group)											{ channel="mysensors:customSensor:gateway:node01:var2" }
+    Number	 bedroom_sensor_staticparent		"Schlafzimmer [MAP(staticparent.map):%s]"						(bedroom_group)											{ channel="mysensors:customSensor:gateway:node01:var3" }
+    Number	 bedroom_sensor_sendretry			"Schlafzimmer [%.0f]"											(bedroom_group)											{ channel="mysensors:customSensor:gateway:node01:var4" }
+    Number   bedroom_sensor_sleeptime        	"Schlafzimmer [%.0f Min]"             		<sleeptime>         (bedroom_group, group_sensor_sleeptime)					{ channel="mysensors:customSensor:gateway:node01:var5" }
+    Switch   bedroom_sensor_online           	"Schlafzimmer"                        		<online>          	(bedroom_group, group_sensor_online)					{ channel="mysensors:light:gateway:node01:status", expire="70m,command=OFF"  }
+    Number	 bedroom_sensor_tx					"Schlafzimmer [%.0f]"											(bedroom_group)											{ channel="mysensors:light:gateway:node01:var1" }
+    Number	 bedroom_sensor_txfailed			"Schlafzimmer [%.0f]"											(bedroom_group)											{ channel="mysensors:light:gateway:node01:var2" }
+    Number	 bedroom_sensor_txretries			"Schlafzimmer [%.0f]"											(bedroom_group)											{ channel="mysensors:light:gateway:node01:var3" }
