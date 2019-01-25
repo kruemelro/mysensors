@@ -26,7 +26,7 @@
  *
  */
 // Default Settings Area ************************************
-#define VERSION "1.21"
+#define VERSION "1.22"
 #define Sketchname "WindowNode"
 #define globalconfigversion 3
 int BATTERY_SENSE_PIN = A0;
@@ -267,13 +267,6 @@ void loop()
     // Value has changed from last transmission, send the updated value
     resend(msg.set(value==HIGH));
     sentValue = value;
-    if (!rptcycle) {
-      resend(iamonline.set(onvalue));
-      resend(sendtx.set(msgcounter));
-      resend(failedtx.set(failcounter));
-      resend(msgcfg5.set(mySleeptime));
-      rptcycle=1;
-    }
   }
 
   value = digitalRead(WindowPin2);
@@ -282,13 +275,6 @@ void loop()
     // Value has changed from last transmission, send the updated value
     resend(msg2.set(value==HIGH));
     sentValue2 = value;
-    if (!rptcycle) {
-      resend(iamonline.set(onvalue));
-      resend(sendtx.set(msgcounter));
-      resend(failedtx.set(failcounter));
-      resend(msgcfg5.set(mySleeptime));
-      rptcycle=1;
-    }
   }
 
   float volt = analogRead(BATTERY_SENSE_PIN) * 0.003363075;
@@ -300,20 +286,16 @@ void loop()
   if (oldBatteryPcnt != batteryPcnt || nNoUpdates == FORCE_UPDATE_N_READS) {
     // Power up radio after sleep
     resend(msgVCC.set(volt,2));
-    if (!rptcycle) {
-      resend(iamonline.set(onvalue));
-      resend(sendtx.set(msgcounter));
-      resend(failedtx.set(failcounter));
-      resend(msgcfg5.set(mySleeptime));
-      rptcycle=1;
-    }
     sendBatteryLevel(batteryPcnt);
     oldBatteryPcnt = batteryPcnt;
     nNoUpdates = 0;
   } else {
     nNoUpdates++;
   }
-  rptcycle=0;
+  resend(iamonline.set(onvalue));
+  resend(sendtx.set(msgcounter));
+  resend(failedtx.set(failcounter));
+  resend(msgcfg5.set(mySleeptime));
   smartSleep(WindowPin1-2, CHANGE, WindowPin2-2, CHANGE, UPDATE_INTERVAL);
 }
 
