@@ -7,3 +7,11 @@ Some sensor values are only sent on reboot. To get all openHAB items filled rebo
 
 ## Remote Config
 The Sensors are able to get some Config-Parameters from Remote. The Parameters are Sensor specific and defined in the readme from the Sensor. To use openHAB to send the configs to the Sensors link the Var Childs to openHAB items. You also have to set Smartsleep on in the Properties of the Sensor Child 201.
+
+## Versions
+| Typ | Version | 
+|:--- |:-------:|
+| Gateway  | 1.13 |
+| Repeater | 1.20 |
+| Temperature | 1.20 |
+| Windows | 1.20 |
