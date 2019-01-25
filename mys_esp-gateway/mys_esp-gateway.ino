@@ -58,7 +58,7 @@
  */
 
 #define SKETCHNAME "Gateway_channel-104"
-#define VERSION "1.20"
+#define VERSION "1.21"
 
 // Enable debug prints to serial monitor
 //#define MY_DEBUG
