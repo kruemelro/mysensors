@@ -25,7 +25,7 @@
  */
  
 // Default Settings Area ************************************
-#define VERSION "1.20"
+#define VERSION "1.21"
 #define Sketchname "RepeaterNode"
 #define globalconfigversion 3
 int BATTERY_SENSE_PIN = A0;
