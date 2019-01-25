@@ -58,7 +58,7 @@
  */
 
 #define SKETCHNAME "Gateway_channel-104"
-#define VERSION "1.10"
+#define VERSION "1.20"
 
 // Enable debug prints to serial monitor
 //#define MY_DEBUG
@@ -75,8 +75,8 @@
 
 #define MY_GATEWAY_ESP8266
 
-#define MY_WIFI_SSID "beehive"
-#define MY_WIFI_PASSWORD "TaPh!8388"
+#define MY_WIFI_SSID "SSID"
+#define MY_WIFI_PASSWORD "Password"
 
 #define MY_WIFI_HOSTNAME "mysgw"
 
