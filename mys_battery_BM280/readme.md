@@ -21,8 +21,6 @@
 |    |             |Status| Online|
 |    |             |Var1| Transmissions |
 |    |             |Var2| FailedTransmissions|
-|    |             |Var3| Retries |
-
 
 ## System Config Values
 
@@ -58,4 +56,4 @@
     Switch   bedroom_sensor_online        "Schlafzimmer"                            <online>      (bedroom_group, group_sensor_online)      { channel="mysensors:light:gateway:node01:status", expire="70m,command=OFF"  }
     Number	 bedroom_sensor_tx            "Schlafzimmer [%.0f]"                                   (bedroom_group)                           { channel="mysensors:light:gateway:node01:var1" }
     Number	 bedroom_sensor_txfailed      "Schlafzimmer [%.0f]"                                   (bedroom_group)                           { channel="mysensors:light:gateway:node01:var2" }
-    Number	 bedroom_sensor_txretries     "Schlafzimmer [%.0f]"                                   (bedroom_group)                           { channel="mysensors:light:gateway:node01:var3" }
+    
