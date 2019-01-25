@@ -11,7 +11,7 @@ The Sensors are able to get some Config-Parameters from Remote. The Parameters a
 ## Versions
 | Typ | Version | 
 |:--- |:-------:|
-| Gateway  | 1.13 |
-| Repeater | 1.20 |
-| Temperature | 1.20 |
-| Windows | 1.20 |
+| Gateway  | 1.20 |
+| Repeater | 1.21 |
+| Temperature | 1.21 |
+| Windows | 1.21 |
